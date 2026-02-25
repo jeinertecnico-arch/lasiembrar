@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Siembra Restaurante</title>
+<style>
+body{font-family:Arial;margin:0;background:#fff8e1}
+header{background:#d4a017;color:#fff;text-align:center;padding:25px;font-size:30px;font-weight:bold}
+.container{padding:20px;max-width:1200px;margin:auto}
+h2{margin-top:40px;border-left:6px solid #d4a017;padding-left:10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:20px}.card{
+    background:#ffffff;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,.18);
+    padding:20px;
+    transition:0.3s ease;
+    cursor:pointer;
+    text-align:center;
+    overflow:hidden;
+
+    /* 🔥 Límites más oscuros */
+    border:2px solid #333333;
+}
+.card:hover{transform:scale(1.03)}
+.card img{width:100%;max-height:180px;height:auto;object-fit:contain;border-radius:10px;margin-bottom:10px;background:#fff}
+.price{font-size:18px;font-weight:bold;color:#d4a017;margin-top:8px}
+
+.modal{display:none;position:fixed;z-index:1000;padding-top:60px;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,.8)}
+.modal-box{background:white;margin:auto;padding:30px;border-radius:15px;max-width:600px;position:relative}
+.close{position:absolute;top:10px;right:20px;font-size:28px;font-weight:bold;cursor:pointer}
+.modal-box h3{margin-top:0}
+header{
+    background:#1f1f1f;
+    padding:20px 30px;
+    color:white;
+}
+
+.header-container{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    max-width:1200px;
+    margin:auto;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin-left:25px;
+    font-weight:bold;
+    transition:0.3s;
+}
+
+nav a:hover{
+    color:#d4a017;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="header-container">
+        <div class="logo">La Siembra Restaurante 🍽️</div>
+        <nav>
+            <a href="#principales">Platos Principales</a>
+            <a href="#entradas">Entradas</a>
+            <a href="#bebidas">Bebidas</a>
+        </nav>
+    </div>
+</header>
+<div class="container" id="menu"></div>
+
+<div id="myModal" class="modal">
+<div class="modal-box">
+<span class="close" onclick="closeModal()">&times;</span>
+<img id="modalImage" style="width:100%;max-height:300px;object-fit:contain;border-radius:10px;margin-bottom:15px;">
+<h3 id="modalTitle"></h3>
+<p id="modalDescription"></p>
+</div>
+</div>
+
+<script>
+
+// ==========================
+// 1️⃣ AGREGAMOS CATEGORÍA
+// ==========================
+
+const platos = [
+
+/* ================= PRINCIPALES ================= */
+
+{nombre:"Amarillo a la Monseñor",precio:"$55.000",imagen:"imagenes/amarillo-monseñor.jpeg",categoria:"principales",descripcion:"Exquisitos trozos de Amarillo (bagre) preparados en una salsa especial de la casa, enriquecidos con camarones frescos y terminados con una capa de queso parmesano gratinado al horno. Se acompaña con arroz y patacón."},
+
+{nombre:"Trimiñón",precio:"$54.000",imagen:"imagenes/triminon.png",categoria:"principales",descripcion:"La gran especialidad del restaurante. Una combinación de tres carnes blancas (pollo, pescado y cerdo) bañadas en la salsa de la casa con camarones y champiñones, cubierto con queso doble crema y parmesano gratinado al horno. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Cazuela de Mariscos",precio:"$49.000",imagen:"imagenes/cazuela-mariscos.jpeg",categoria:"principales",descripcion:"Una selección de los mejores frutos del mar (pulpo, camarones y más) en una base cremosa, con adición extra de camarones y queso parmesano gratinado. Se sirve con arroz y patacón."},
+
+{nombre:"Cachama a la Samaritana",precio:"$52.000",imagen:"imagenes/cachama-samaritana.jpeg",categoria:"principales",descripcion:"Cachama entera frita, bañada en salsa de la casa con camarones, verduras y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Bagre a la Samaritana",precio:"$52.000",imagen:"imagenes/bagre-samaritana.jpg",categoria:"principales",descripcion:"Posta de bagre a la plancha, bañada en salsa de la casa con camarones, verduras y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Mojarra a la Samaritana",precio:"$52.000",imagen:"imagenes/mojarra-samaritana.jpeg",categoria:"principales",descripcion:"Mojarra entera frita, bañada en salsa de la casa con camarones, verduras y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Trucha a la Samaritana",precio:"$52.000",imagen:"imagenes/trucha-samaritana.jpeg",categoria:"principales",descripcion:"Trucha abierta a la plancha, bañada en salsa de la casa con camarones, verduras y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Pollo a la Samaritana",precio:"$52.000",imagen:"imagenes/pollo-samaritana.jpeg",categoria:"principales",descripcion:"Pechuga de pollo a la plancha, bañada en salsa de la casa con camarones, verduras y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Chuleta de Pescado a la Samaritana",precio:"$52.000",imagen:"imagenes/chuleta-pescado-samaritana.jpg",categoria:"principales",descripcion:"Filete de pescado a la plancha, bañado en salsa de la casa con camarones, verduras y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Lomo de Cerdo a la Samaritana",precio:"$52.000",imagen:"imagenes/lomo-cerdo-samaritana.jpeg",categoria:"principales",descripcion:"Lomo de cerdo a la plancha, bañado en salsa de la casa con camarones, verduras y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Pollo Apanado a la Jhon",precio:"$45.000",imagen:"imagenes/pollo-jhon.jpg",categoria:"principales",descripcion:"Pechuga de pollo rebozada en miga de pan, con salsa de la casa y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Chuleta de Pescado a la Jhon",precio:"$45.000",imagen:"imagenes/pescado-jhon.jpeg",categoria:"principales",descripcion:"Filete de pescado rebozado en miga de pan, con salsa de la casa y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Chuleta de Cerdo a la Jhon",precio:"$45.000",imagen:"imagenes/cerdo-jhon.jpg",categoria:"principales",descripcion:"Lomo de cerdo rebozado en miga de pan, con salsa de la casa y queso parmesano gratinado. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Pollo Hawaiano",precio:"$45.000",imagen:"imagenes/pollo-hawaiano.jpeg",categoria:"principales",descripcion:"Pechuga de pollo con el toque agridulce de piña y jamón ahumado bajo un gratinado doble de quesos. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Lomo de Cerdo Hawaiano",precio:"$45.000",imagen:"imagenes/cerdo-hawaiano.jpeg",categoria:"principales",descripcion:"Lomo de cerdo con el toque agridulce de piña y jamón ahumado bajo un gratinado doble de quesos. Se acompaña de arroz, patacón y papas fritas."},
+
+{nombre:"Bagre en Salsa",precio:"$43.000",imagen:"imagenes/bagre-salsa.jpeg",categoria:"principales",descripcion:"Posta de bagre cocinada lentamente en salsa criolla (hogao). Se acompaña de arroz y patacón."},
+
+{nombre:"Mojarra en Salsa",precio:"$37.000",imagen:"imagenes/mojarra-salsa.jpg",categoria:"principales",descripcion:"Mojarra entera preparada en una deliciosa salsa criolla. Se acompaña de arroz y patacón."},
+
+{nombre:"Cachama en Salsa",precio:"$35.000",imagen:"imagenes/cachama-salsa.jpeg",categoria:"principales",descripcion:"Cachama entera preparada en una deliciosa salsa criolla. Se acompaña de arroz y patacón."},
+
+{nombre:"Lengua en Salsa",precio:"$34.000",imagen:"imagenes/lengua-salsa.jpeg",categoria:"principales",descripcion:"Lengua de res tierna y jugosa bañada en salsa criolla de cebolla y tomate. Se acompaña de arroz y patacón."},
+
+{nombre:"Bagre Frito",precio:"$41.000",imagen:"imagenes/bagre-frito.jpg",categoria:"principales",descripcion:"Posta de bagre frita, acompañada de arroz, patacón, ensalada y papa."},
+
+{nombre:"Pollo Apanado",precio:"$35.000",imagen:"imagenes/pollo-apanado.jpeg",categoria:"principales",descripcion:"Pechuga de pollo rebozada en miga de pan, acompañada de arroz, patacón, ensalada y papa."},
+
+{nombre:"Chuleta de Pescado Apanada",precio:"$35.000",imagen:"imagenes/pescado-apanado.jpeg",categoria:"principales",descripcion:"Filete de pescado rebozado en miga de pan, acompañado de arroz, patacón, ensalada y papa."},
+
+{nombre:"Chuleta de Cerdo Apanada",precio:"$35.000",imagen:"imagenes/cerdo-apanado.jpg",categoria:"principales",descripcion:"Lomo de cerdo rebozado en miga de pan, acompañado de arroz, patacón, ensalada y papa."},
+
+{nombre:"Mojarra Frita",precio:"$35.000",imagen:"imagenes/mojarra-frita.jpeg",categoria:"principales",descripcion:"Mojarra entera frita, acompañada de arroz, patacón y ensalada (sin papa)."},
+
+{nombre:"Cachama Frita",precio:"$33.000",imagen:"imagenes/cachama-frita.jpeg",categoria:"principales",descripcion:"Cachama entera frita, acompañada de arroz, patacón y ensalada (sin papa)."},
+
+{nombre:"Trucha a la Plancha",precio:"$39.000",imagen:"imagenes/trucha-plancha.jpeg",categoria:"principales",descripcion:"Filete de trucha abierto, asado a la plancha. Acompañado de arroz, patacón, ensalada y papa."},
+
+{nombre:"Lomo de Res a la Plancha",precio:"$39.000",imagen:"imagenes/lomo-res-plancha.jpeg",categoria:"principales",descripcion:"Corte de res seleccionado, asado a la plancha. Acompañado de arroz, patacón, ensalada y papa."},
+
+{nombre:"Lomo de Cerdo a la Plancha",precio:"$32.000",imagen:"imagenes/lomo-cerdo-plancha.jpeg",categoria:"principales",descripcion:"Filete de cerdo tierno, asado a la plancha. Acompañado de arroz, patacón, ensalada y papa."},
+
+{nombre:"Pollo a la Plancha",precio:"$31.000",imagen:"imagenes/pollo-plancha.jpeg",categoria:"principales",descripcion:"Pechuga de pollo jugosa, asada a la plancha. Acompañado de arroz, patacón, ensalada y papa."},
+
+/* ================= ENTRADAS ================= */
+
+{nombre:"Ceviche de camarón",precio:"$28.000",imagen:"imagenes/ceviche-camaron.jpeg",categoria:"entradas",descripcion:"Camarones preparados en una deliciosa salsita picante de la casa, acompañados de galleta o patacón."},
+
+{nombre:"Suizo",precio:"$16.000",imagen:"imagenes/suizo.jpeg",categoria:"entradas",descripcion:"Chorizo tipo suizo acompañado de porción de papas y ensalada fresca."},
+
+{nombre:"Pinchos de pollo apanado",precio:"$16.000",imagen:"imagenes/pinchos-pollo.jpeg",categoria:"entradas",descripcion:"Brochetas de pollo rebozadas en miga de pan, acompañadas de papa."},
+
+{nombre:"Nuggets",precio:"$16.000",imagen:"imagenes/nuggets.jpeg",categoria:"entradas",descripcion:"Porción de bocaditos de pollo apanados, acompañados de papa."},
+
+{nombre:"Salchipapa",precio:"$14.000",imagen:"imagenes/salchipapa.jpg",categoria:"entradas",descripcion:"Clásica combinación de papas fritas con salchicha."},
+
+{nombre:"Patacones con hogao",precio:"$9.000",imagen:"imagenes/patacones-hogao.jpeg",categoria:"entradas",descripcion:"Porción de patacones crujientes servidos con nuestra salsa de cebolla y tomate."},
+
+{nombre:"Consomé de pescado",precio:"$7.000",imagen:"imagenes/consome-pescado.jpeg",categoria:"entradas",descripcion:"Caldo concentrado que incluye papa cocinada, una porción de pescado, una patacona y limoncito."},
+// ===== BEBIDAS =====
+{nombre:"Jarra preparada natural (panela y limón)",precio:"$12.000",imagen:"imagenes/jarra-panela-limon.jpg",descripcion:"Refrescante jarra preparada natural a base de panela y limón, ideal para acompañar cualquier plato.",categoria:"bebidas"},
+
+{nombre:"Cerveza Águila",precio:"$6.000",imagen:"imagenes/cerveza-aguila.jfif",descripcion:"Cerveza Águila bien fría.",categoria:"bebidas"},
+
+{nombre:"Cerveza Club Colombia Dorada",precio:"$7.000",imagen:"imagenes/club-colombia-dorada.jfif",descripcion:"Cerveza Club Colombia Dorada, suave y refrescante.",categoria:"bebidas"},
+
+{nombre:"Coca-Cola",precio:"$5.000",imagen:"imagenes/cocacola.jfif",descripcion:"Gaseosa Coca-Cola fría.",categoria:"bebidas"},
+
+{nombre:"Bretaña",precio:"$5.000",imagen:"imagenes/bretana.jfif",descripcion:"Bebida gaseosa Bretaña refrescante.",categoria:"bebidas"},
+
+{nombre:"Agua",precio:"$4.000",imagen:"imagenes/agua.jfif",descripcion:"Botella de agua natural.",categoria:"bebidas"},
+
+{nombre:"Agua con gas",precio:"$4.000",imagen:"imagenes/agua-gas.jfif",descripcion:"Botella de agua con gas.",categoria:"bebidas"},
+
+{nombre:"Sprite",precio:"$5.000",imagen:"imagenes/sprite.jfif",descripcion:"Gaseosa Sprite fría.",categoria:"bebidas"},
+
+{nombre:"Helados Santa Anita",precio:"$6.000",imagen:"imagenes/helados-santa-anita.jfif",descripcion:"Helados Santa Anita en diferentes sabores disponibles.",categoria:"bebidas"}
+];
+
+
+// ==========================
+// 2️⃣ CREAMOS SECCIONES
+// ==========================
+
+const menu = document.getElementById("menu");
+
+menu.innerHTML = `
+<h2 id="principales">Platos Principales</h2>
+<div class="grid" id="contenedor-principales"></div>
+
+<h2 id="entradas">Entradas</h2>
+<div class="grid" id="contenedor-entradas"></div>
+
+<h2 id="bebidas">Bebidas</h2>
+<div class="grid" id="contenedor-bebidas"></div>
+`;
+
+const contPrincipales = document.getElementById("contenedor-principales");
+const contEntradas = document.getElementById("contenedor-entradas");
+const contBebidas = document.getElementById("contenedor-bebidas");
+
+
+// ==========================
+// 3️⃣ DISTRIBUIMOS LOS PLATOS
+// ==========================
+
+platos.forEach(plato=>{
+const card=document.createElement("div");
+card.className="card";
+card.innerHTML=`<img src="${plato.imagen}"><h3>${plato.nombre}</h3><div class="price">${plato.precio}</div>`;
+card.onclick=()=>openModal(plato);
+
+if(plato.categoria==="principales") contPrincipales.appendChild(card);
+if(plato.categoria==="entradas") contEntradas.appendChild(card);
+if(plato.categoria==="bebidas") contBebidas.appendChild(card);
+});
+
+
+// ==========================
+// MODAL
+// ==========================
+
+function openModal(plato){
+document.getElementById("modalImage").src = plato.imagen;
+document.getElementById("modalTitle").innerText = plato.nombre + " - " + plato.precio;
+document.getElementById("modalDescription").innerText = plato.descripcion;
+document.getElementById("myModal").style.display = "block";
+}
+
+function closeModal(){
+document.getElementById("myModal").style.display="none";
+}
+
+</script>
+
+</body>
+</html>
